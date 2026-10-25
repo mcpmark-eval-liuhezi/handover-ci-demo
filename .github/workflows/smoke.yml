@@ -1,0 +1,12 @@
+name: Smoke test
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print marker
+        run: echo "HANDOVER-SMOKE-OK"
