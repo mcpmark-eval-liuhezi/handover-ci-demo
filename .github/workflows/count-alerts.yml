@@ -1,0 +1,25 @@
+name: Count code scanning alerts
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  count:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Count open code scanning alerts
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          resp=$(curl -sS \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/code-scanning/alerts?state=open&per_page=100")
+          echo "RAW_RESPONSE_START"
+          echo "$resp"
+          echo "RAW_RESPONSE_END"
+          count=$(printf '%s' "$resp" | jq 'if type == "array" then length else "ERROR_NOT_ARRAY" end')
+          echo "OPEN_CODE_SCANNING_ALERT_COUNT=$count"
